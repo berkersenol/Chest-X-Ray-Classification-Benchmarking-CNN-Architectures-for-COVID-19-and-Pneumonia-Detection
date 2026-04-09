@@ -1,14 +1,14 @@
 # Deep Learning for Medical Image Classification
 
-> Benchmarking five CNN architectures for **three-class chest X-ray classification** — COVID-19, non-COVID pneumonia, and normal cases — with a focus on the trade-off between diagnostic accuracy and computational efficiency for resource-constrained clinical settings.
+> Benchmarking five CNN architectures for **three-class chest X-ray classification**: COVID-19, non-COVID pneumonia, and normal cases, with a focus on the trade-off between diagnostic accuracy and computational efficiency for resource-constrained clinical settings.
 
 **Authors:** Berker Senol, Roya Ghamari
-**Institution:** University of Padova — Human Data Analytics
+**Institution:** University of Padova, Human Data Analytics
 **Paper:** [`Senol_Ghamari.pdf`](./paper/Senol_Ghamari.pdf)
 
 ---
 
-## TL;DR — Key Result
+## TL;DR, Key Result
 
 | Model | Params | Val. Accuracy | Training Time | Model Size |
 |---|---|---|---|---|
@@ -19,15 +19,15 @@
 | **DenseNet-121** ⭐ | **37.4 M** | **92.3%** | **4,305 s** | **143 MB** |
 
 **DenseNet-121** (padded inputs) was selected as the best model with **93% test accuracy** across all three classes.
-Notably, the **custom CNN with a Squeeze-and-Excitation attention block** reached **91.8% validation accuracy** with **~14× fewer parameters** and **~14× smaller model size** than DenseNet-121 — a compelling option when compute is constrained.
+Notably, the **custom CNN with a Squeeze-and-Excitation attention block** reached **91.8% validation accuracy** with **~14x fewer parameters** and **~14x smaller model size** than DenseNet-121, a compelling option when compute is constrained.
 
 ---
 
 ## Motivation
 
-Distinguishing between viral pneumonia (including COVID-19), bacterial/non-COVID pneumonia, and healthy lungs from chest radiographs is a clinically important but challenging task — the visual signatures of these conditions can be subtle and overlapping. The COVID-19 pandemic accelerated interest in automated chest X-ray analysis, but most published studies report results on different datasets with different preprocessing pipelines, making fair architectural comparisons difficult.
+Distinguishing between viral pneumonia (including COVID-19), bacterial/non-COVID pneumonia, and healthy lungs from chest radiographs is a clinically important but challenging task: the visual signatures of these conditions can be subtle and overlapping. The COVID-19 pandemic accelerated interest in automated chest X-ray analysis, but most published studies report results on different datasets with different preprocessing pipelines, making fair architectural comparisons difficult.
 
-This project addresses that gap by benchmarking five CNN architectures **on the same three-class dataset, with the same preprocessing options**, and reporting both accuracy *and* computational cost — so practitioners can choose models based on the constraints of their deployment environment rather than on cherry-picked accuracy numbers.
+This project addresses that gap by benchmarking five CNN architectures **on the same three-class dataset, with the same preprocessing options**, and reporting both accuracy *and* computational cost, so practitioners can choose models based on the constraints of their deployment environment rather than on cherry-picked accuracy numbers.
 
 ---
 
@@ -48,8 +48,8 @@ This project addresses that gap by benchmarking five CNN architectures **on the 
 
 The pipeline compares **two preprocessing strategies** before feeding images to each architecture:
 
-1. **Resizing** — all images stretched to 224×224 (standardized but distorts aspect ratio)
-2. **Padding** — images padded to 224×224 while preserving the original aspect ratio
+1. **Resizing**: all images stretched to 224x224 (standardized but distorts aspect ratio)
+2. **Padding**: images padded to 224x224 while preserving the original aspect ratio
 
 All images are converted to grayscale and normalized to `[0, 1]`. During training only, augmentation is applied: random horizontal flips, brightness jitter, and small rotations.
 
@@ -61,10 +61,10 @@ All five models are implemented from scratch in **TensorFlow / Keras** (no pretr
 
 | # | Model | Highlights |
 |---|---|---|
-| 1 | **Custom CNN** | 3 conv blocks (32→64→64 filters) + dense head — baseline |
+| 1 | **Custom CNN** | 3 conv blocks (32 -> 64 -> 64 filters) + dense head, baseline |
 | 2 | **Custom CNN + SE Attention** | Adds a Squeeze-and-Excitation block for channel-wise attention; dropout 0.5 |
 | 3 | **ResNet-34** | Basic residual blocks with identity shortcuts, 4 stages |
-| 4 | **ResNet-50** | Bottleneck residual blocks (1×1 → 3×3 → 1×1), deeper feature hierarchy |
+| 4 | **ResNet-50** | Bottleneck residual blocks (1x1 -> 3x3 -> 1x1), deeper feature hierarchy |
 | 5 | **DenseNet-121** | Dense blocks with feature reuse, transition layers, global avg pooling |
 
 Each model is trained on **both** the resized and the padded dataset, giving 10 training runs total. All runs use:
@@ -95,7 +95,7 @@ Each model is trained on **both** the resized and the padded dataset, giving 10 
 
 **Padded inputs consistently outperform resized inputs** for the deeper architectures, supporting the hypothesis that preserving the original aspect ratio retains diagnostically relevant features.
 
-### Final test results — DenseNet-121 (padded)
+### Final test results, DenseNet-121 (padded)
 
 ![Test Results](./figures/test_results.png)
 
@@ -110,16 +110,16 @@ Each model is trained on **both** the resized and the padded dataset, giving 10 
 
 ![Confusion Matrix](./figures/confusion_matrix.png)
 
-Most errors come from **pneumonia cases being misclassified as normal** (40 cases) — a recognized challenge in chest X-ray analysis where bacterial pneumonia signatures can be subtle. Notably, COVID-19 is rarely confused with the other two classes, suggesting its radiographic features are more distinctive in this dataset.
+Most errors come from **pneumonia cases being misclassified as normal** (40 cases), a recognized challenge in chest X-ray analysis where bacterial pneumonia signatures can be subtle. Notably, COVID-19 is rarely confused with the other two classes, suggesting its radiographic features are more distinctive in this dataset.
 
 ---
 
 ## Key Takeaways
 
-1. **DenseNet-121 wins on accuracy** (93% test) thanks to feature reuse and dense connectivity, but it is the most expensive model — 37 M parameters, 143 MB, ~4,300 s training time.
-2. **The SE-attention CNN is the best efficiency/accuracy trade-off**: only 2.6 M parameters and a 10 MB model, yet 91.8% validation accuracy — within ~1 point of DenseNet-121. For edge deployment or low-resource clinics, this is the more practical choice.
-3. **Padding > resizing** for the deeper architectures — preserving aspect ratio matters more as networks get deeper.
-4. **Pneumonia is the hardest class**, not COVID-19 — across all models, pneumonia/normal confusion was the dominant error mode. This is the most important direction for future improvement.
+1. **DenseNet-121 wins on accuracy** (93% test) thanks to feature reuse and dense connectivity, but it is the most expensive model: 37 M parameters, 143 MB, ~4,300 s training time.
+2. **The SE-attention CNN is the best efficiency/accuracy trade-off**: only 2.6 M parameters and a 10 MB model, yet 91.8% validation accuracy, within ~1 point of DenseNet-121. For edge deployment or low-resource clinics, this is the more practical choice.
+3. **Padding beats resizing** for the deeper architectures: preserving aspect ratio matters more as networks get deeper.
+4. **Pneumonia is the hardest class**, not COVID-19. Across all models, pneumonia/normal confusion was the dominant error mode. This is the most important direction for future improvement.
 5. **Learning-rate selection was the hardest part** of training the deeper models; ResNets in particular showed unstable validation loss curves until the LR was lowered to `1e-5`.
 
 ---
@@ -132,7 +132,7 @@ Most errors come from **pneumonia cases being misclassified as normal** (40 case
 ├── paper/
 │   └── Senol_Ghamari.pdf       # Full IEEE-style paper
 ├── notebooks/
-│   └── Senol_Ghamari.ipynb     # End-to-end notebook (preprocessing → training → evaluation → demo)
+│   └── Senol_Ghamari.ipynb     # End-to-end notebook (preprocessing, training, evaluation, demo)
 ├── figures/
 │   ├── pipeline.png
 │   ├── confusion_matrix.png
@@ -149,14 +149,14 @@ Most errors come from **pneumonia cases being misclassified as normal** (40 case
 
 The notebook was originally developed in **Google Colab** with GPU acceleration.
 
-### Option 1 — Google Colab (recommended)
+### Option 1: Google Colab (recommended)
 
 1. Open [`notebooks/Senol_Ghamari.ipynb`](./notebooks/Senol_Ghamari.ipynb) in Colab
 2. Mount your Google Drive and update the dataset paths in the preprocessing cells
-3. Runtime → Change runtime type → **GPU**
+3. Runtime -> Change runtime type -> **GPU**
 4. Run all cells
 
-### Option 2 — Local
+### Option 2: Local
 
 ```bash
 git clone https://github.com/<your-username>/chest-xray-cnn-benchmark.git
@@ -171,7 +171,7 @@ jupyter notebook notebooks/Senol_Ghamari.ipynb
 
 ## Future Work
 
-- **Targeted improvements on pneumonia recall** — the dominant error mode is pneumonia → normal, so class-weighted loss or pneumonia-specific augmentation would have the most impact
+- **Targeted improvements on pneumonia recall**: the dominant error mode is pneumonia -> normal, so class-weighted loss or pneumonia-specific augmentation would have the most impact
 - **Ensembling** the SE-attention CNN with DenseNet-121 to combine efficiency and accuracy
 - More expressive attention mechanisms (CBAM, self-attention) on the lightweight backbone
 - **Grad-CAM visualizations** to make predictions interpretable for clinicians
