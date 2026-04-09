@@ -1,0 +1,9 @@
+tensorflow>=2.10.0
+tensorflow-addons
+visualkeras
+pandas
+numpy
+matplotlib
+seaborn
+scikit-learn
+Pillow
